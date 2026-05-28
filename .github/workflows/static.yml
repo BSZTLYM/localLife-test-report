@@ -1,6 +1,5 @@
 name: Deploy Allure Report to GitHub Pages
 
-# 当main分支的allure-report文件夹有变化时自动触发
 on:
   push:
     branches: [ main ]
@@ -11,16 +10,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 必须授予写权限才能创建gh-pages分支
+      contents: write  # 这一行是关键，必须有写权限
     steps:
-      - name: 检出仓库代码
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 部署Allure报告到GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report  # 你的报告所在目录
+          publish_dir: ./allure-report
           publish_branch: gh-pages
-          force_orphan: true  # 创建干净的分支，不保留历史
-          enable_jekyll: false  # 禁用Jekyll，因为Allure是纯静态文件
+          force_orphan: true
+          enable_jekyll: false
