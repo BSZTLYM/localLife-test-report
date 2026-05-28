@@ -1,43 +1,26 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy Allure Report to GitHub Pages
 
+# 当main分支的allure-report文件夹有变化时自动触发
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches: [ main ]
+    paths:
+      - 'allure-report/**'
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 必须授予写权限才能创建gh-pages分支
     steps:
-      - name: Checkout
+      - name: 检出仓库代码
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: 部署Allure报告到GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4.1.0
         with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report  # 你的报告所在目录
+          publish_branch: gh-pages
+          force_orphan: true  # 创建干净的分支，不保留历史
+          enable_jekyll: false  # 禁用Jekyll，因为Allure是纯静态文件
